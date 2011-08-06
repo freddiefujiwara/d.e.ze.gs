@@ -1,9 +1,13 @@
-{
-    "name": "application-name"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "express": "2.4.3"
-    , "ejs": ">= 0.0.1"
+{   "name"   : "d.e.ze.gs" ,
+    "version": "0.0.1" ,
+    "private": true,
+    "dependencies": {
+      "ejs"         : "0.4.3" ,
+      "express"     : "2.4.3" ,
+      "mongoose"    : "1.8.0" ,
+      "node-config" : "0.0.2" ,
+      "oauth"       : "0.9.3" ,
+      "redis"       : "0.6.7" ,
+      "socket.io"   : "0.7.7"
   }
 }
