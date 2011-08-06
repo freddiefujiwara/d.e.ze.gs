@@ -1,0 +1,283 @@
+/* Author: Ganesh Gunasegaran */
+/* Common Styles */
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background-color: #fff;
+  color: #333;
+  font-size: 80%;
+  font-family: verdana, arial, "trebuchet ms", helvetica, sans-serif;
+  text-align: center;
+}
+
+blockquote {
+  padding: 10px;
+  font-size: 110%;
+  letter-spacing: 1px;
+  font-style: italic;
+  background-color: #f7f7f7;
+  color: #666;
+  border-top: 1px solid #dedede;
+  border-bottom: 1px solid #dedede;
+  border-left: 10px solid #dedede;
+  border-right: 1px solid #dedede;
+  margin: 10px;
+}
+
+p {
+  padding: 5px;
+}
+
+h1, h2, h3, h4 {
+  font-family: georgia, serif;
+  display: block;
+  border-bottom: 1px solid #eeeeee;
+  padding-left: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 140%;
+}
+
+h2 {
+  font-size: 130%;
+}
+
+h3 {
+  font-size: 120%
+}
+
+h4 {
+  font-size: 110%;
+}
+
+a:link, a:visited{
+  text-decoration: none;
+  color: #000066;
+  background-color: inherit;
+  border-bottom: 1px solid #ddd;
+}
+
+a:hover {
+  color: #aa0000;
+  background-color: inherit;
+}
+
+ul {
+  padding-left: 30px;
+  list-style-type: disc;  
+}
+
+ol {
+  padding-left: 35px;
+}
+
+hr {
+  width: 80%;
+  border: 1px solid #eeeeee;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td {
+  border: 1px solid #eee;
+  padding: 4px;
+}
+
+th {
+  color: inherit;
+  border: 1px solid #dddddd;
+  background-color: #f3f3f3;
+  padding: 4px;
+}
+
+/* Layout Styles */
+#wrapper {
+  color: inherit;
+  background-color: inherit;
+  width: 776px;
+  margin-left: auto; /* Todo: Do cross browser centering */
+  margin-right: auto;
+  text-align: left;
+}
+
+#main_container {
+  margin: 10px;
+  color: inherit;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+#left_container {
+  width: 180px;
+  float: left;
+  text-align: left;
+}
+
+#bread_crumb {
+  text-align: right;
+  padding-bottom: 5px;
+  color: #999;
+  background-color: inherit;
+}
+
+#bread_crumb a:link, #bread_crumb a:visited{
+  color: #999;
+  background-color: inherit;
+  border: 0px;
+}
+
+#bread_crumb a:hover{
+  color: #777;
+  background-color: inherit;
+}
+
+#right_container {
+  width: 550px;
+  line-height: 1.5em;
+  float: left;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-left: 1px solid #eeeeee;
+}
+
+#header_bar {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: right;
+  display: block;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+#left_menu {
+  padding-left: 2px;
+  padding-right: 10px;
+}
+
+#footer_bar {
+  width: 100%;
+  color: #777;
+  background-color: #eee;
+  text-align: center;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  display: block;
+  clear: both;
+  border-top: 1px solid #ddd;
+}
+
+#footer_bar a:link, #footer_bar a:visited {
+  color: #888;
+  background: inherit;
+}
+
+#footer_bar a:hover {
+  color: #666;
+  background: inherit;
+}
+/* Custom Styles */
+#site_logo {
+  font-family: georgia, serif;
+  font-size: 180%;
+  font-weight: bold;
+  padding-top: 15px;
+  padding-left: 20px;
+  padding-bottom: 15px;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
+.red {
+  color: #a2300d;
+  background-color: inherit;
+}
+
+#header_bar a:link, #header_bar a:visited {
+  text-decoration: none;
+  padding-top: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 3px;
+  color: #fff;
+  background-color: #444; 
+  text-transform: lowercase;
+  border-bottom: 0px;
+}
+
+#header_bar a:hover, #header_bar .active {
+  padding-top: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 3px;
+  color: #fff;
+  background-color: #b4500e; 
+}
+
+#header_bar li{
+  display: inline;
+}
+
+#left_menu ul {
+  list-style-type: none;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#left_menu li {
+  border-bottom: 1px solid #eee;
+}
+
+#left_menu a, #left_menu a:link {
+  display: block;
+  text-decoration: none;
+  color: #000066;
+  background-color: inherit;
+  border: 0;
+  padding: 4px;
+}
+
+#left_menu a:hover {
+  background-color: #fcfcfc;
+  color: #aa0000;
+}
+
+
+.block {
+  color: inherit;
+  background-color: #ffffcc;
+  border: 1px solid #eeeebb;
+}
+
+.block .inner {
+  position: relative;
+  left: 2px;
+  top: 2px;
+  padding: 10px;
+}
+
+.text_box{
+  border: 1px solid #eeeeee;
+  color: inherit;
+  background-color: #f9f9f9;
+  width: 120px;
+  padding: 2px;
+}
+
+.text_box:hover {
+  color: inherit;
+  background-color: #ffffcc;
+}
+
+.button {
+  margin: 5px;
+  border: 1px solid #dcdcdc;
+  color: inherit;
+  background-color: #f9f9f9;
+}
