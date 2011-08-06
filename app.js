@@ -6,6 +6,8 @@
 var express = require('express');
 
 var app = module.exports = express.createServer();
+var conf = require('config').Application;
+var path = require('path');
 
 // Configuration
 
@@ -16,6 +18,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  app.use(express.session({ secret: conf.session.secret }));
 });
 
 app.configure('development', function(){
@@ -30,9 +33,9 @@ app.configure('production', function(){
 
 app.get('/', function(req, res){
   res.render('index', {
-    title: 'Express'
+    title: conf.title
   });
 });
 
-app.listen(3000);
+app.listen(conf.port);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
