@@ -115,7 +115,7 @@ socket
     updateStatus(msg,'signin','sing in now');
   });
   socket.on('miss', function (msg) {
-    updateStatus(msg,'miss','MISS!');
+    updateStatus(msg,'miss','MISS!'+msg.miss);
   });
   socket.on('clear', function (msg) {
     updateStatus(msg,'clear','CLEAR!');

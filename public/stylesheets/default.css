@@ -197,6 +197,7 @@ th {
   font-style: italic;
   letter-spacing: 1px;
   overflow: hidden;
+  height:143px;
 }
 #me img {
   border: 0px;
@@ -292,9 +293,15 @@ li.other li {
   border: 1px solid #eeeebb;
   height: 100px;
 }
+#result {
+  background-color: #ddd;
+  border: 1px solid #eeeebb;
+  height: 100px;
+}
 
 .block .inner {
   background-color: #ddd;
+  overflow: auto; 
   color: #666;
   font-weight: bold;
   margin: 10px;
