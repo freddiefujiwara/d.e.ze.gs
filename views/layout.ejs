@@ -9,7 +9,9 @@
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <link rel='stylesheet' href='/stylesheets/default.css' type=
-  "text/css" />
+ "text/css" />
+  <link rel='stylesheet' href='/stylesheets/jplayer.blue.monday.css' type=
+ "text/css" />
 </head>
 
 <body>
@@ -18,11 +20,12 @@
       <div id="left_container">
         <div id="me" class="clearfix">
           <a href=
-          "#!/<%= session.user_profile.screen_name %>"><img src="http://api.twitter.com/1/users/profile_image/<%= session.user_profile.screen_name %>?size=bigger" /></a>
+          "#!/<%= session.user_profile.screen_name %>"><img src="http://api.twitter.com/1/users/profile_image/<%= session.user_profile.screen_name %>?size=bigger" />
 
           <ul>
             <li>@<%= session.user_profile.screen_name %></li>
-          </ul>
+            <li id="study_time">STUDY: 00:00:00</li>
+          </ul></a>
         </div>
 
         <div id="left_menu">
@@ -31,31 +34,18 @@
       </div>
 
       <div id="right_container">
-        <div id="header_bar">
-          <ul>
-            <li><span class="active">Home</span></li>
-
-            <li><a href="#">Products</a></li>
-
-            <li><a href="#">Services</a></li>
-
-            <li><a href="#">Support</a></li>
-
-            <li><a href="#">About Us</a></li>
-          </ul>
-        </div>
         <%- body %>
+      </div>
 
-        <div id="footer_bar">
-          &copy; 2011 <%= title %>. All rights reserved. Design by
-          <a href="http://www.maravan.in">Ganesh
-          Gunasegaran</a>.<br />
-          <!--This theme is free for distriubtion,  so long as  link to openwebdesing.org and www.best10webhosting.net  stay on the theme-->
-          Courtesy of <a href="http://www.openwebdesign.org"
-          target="_blank">Open Web Design</a> &amp; <a href=
-          "http://www.dubaiapartments.biz/hotels/" target=
-          "_blank">Hotels - Dubai</a>
-        </div>
+      <div id="footer_bar">
+        &copy; 2011 <%= title %>. All rights reserved. Design by
+        <a href="http://www.maravan.in">Ganesh
+        Gunasegaran</a>.<br />
+        <!--This theme is free for distriubtion,  so long as  link to openwebdesing.org and www.best10webhosting.net  stay on the theme-->
+        Courtesy of <a href="http://www.openwebdesign.org"
+        target="_blank">Open Web Design</a> &amp; <a href=
+        "http://www.dubaiapartments.biz/hotels/" target=
+        "_blank">Hotels - Dubai</a>
       </div>
     </div>
   </div>

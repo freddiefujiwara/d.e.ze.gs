@@ -109,6 +109,7 @@ socket
 .on('connection', function(socket) {
   console.log('connected');
   var updateStatus = function(msg,action,stat){
+    msg = msg || {};
     msg.id = socket.id;
     msg.status = stat;
     console.log(msg);
