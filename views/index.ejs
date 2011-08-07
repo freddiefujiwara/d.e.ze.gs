@@ -43,19 +43,27 @@
 <script type="text/javascript" src="/javascripts/jquery.typing.min.js"></script>
 <script type="text/javascript" src="/javascripts/jquery.jplayer.min.js"></script>
 </script>
+<script src="/javascripts/jquery.prettyPopin.js" type="text/javascript" charset="utf-8"></script>
 <script src="/socket.io/socket.io.js" type=
   "text/javascript">
 </script><script type="text/javascript">
 //<![CDATA[
 var stat = null;
 $(document).ready(function(){
-  var studyTime = 0 ,typeStart = 0;
+  var studyTime = 0 ,typeStart = 0, screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
+  if("" == screenName){
+    $("<a href='/static/go_twitter.html' rel='prettyPopin'></a>")
+    .prettyPopin({height:300,width: 550,followScroll:false})
+    .click();
+    return;
+  }
+  $('#typing').focus();
 
   stat = io.connect('http://<%= title %>/status', {transports: ["xhr-polling"],port: 80 });
 
   stat.on('connect', function() {
     stat.emit('signin',{
-      "screen_name": "<%= session.user_profile.screen_name %>"
+      "screen_name": screenName
     });
     var signin = function(msg){
       var member = 
@@ -118,7 +126,7 @@ $(document).ready(function(){
       start: function (event, $elem) {
           startTime = (new Date()).getTime();
           stat.emit('type start',{
-            "screen_name": "<%= session.user_profile.screen_name %>"
+            "screen_name": screenName
           });
           $elem.css('background', '#009be3')
           .css('color', '#fff');
@@ -126,7 +134,7 @@ $(document).ready(function(){
       stop: function (event, $elem) {
           studyTime += (new Date()).getTime() - startTime;
           stat.emit('type end',{
-            "screen_name": "<%= session.user_profile.screen_name %>",
+            "screen_name": screenName,
             "studyTime"  : studyTime
           });
           var sec = parseInt(parseInt(studyTime)/1000);

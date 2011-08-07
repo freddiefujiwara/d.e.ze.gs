@@ -12,6 +12,7 @@
  "text/css" />
   <link rel='stylesheet' href='/stylesheets/jplayer.blue.monday.css' type=
  "text/css" />
+  <link rel="stylesheet" href="/stylesheets/prettyPopin.css" type="text/css" media="screen" charset="utf-8" />
 </head>
 
 <body>
@@ -20,10 +21,10 @@
       <div id="left_container">
         <div id="me" class="clearfix">
           <a href=
-          "#!/<%= session.user_profile.screen_name %>"><img src="http://api.twitter.com/1/users/profile_image/<%= session.user_profile.screen_name %>?size=bigger" />
+          "#!/<%= loggedIn ? session.user_profile.screen_name : '' %>"><img src="http://api.twitter.com/1/users/profile_image/<%= loggedIn ? session.user_profile.screen_name : 'kyusuisho' %>?size=bigger" />
 
           <ul>
-            <li>@<%= session.user_profile.screen_name %></li>
+            <li>@<%= loggedIn ? session.user_profile.screen_name : '' %></li>
             <li id="study_time">STUDY: 00:00:00</li>
           </ul></a>
         </div>

@@ -41,13 +41,13 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
-// Functions
-function isLoggedIn(req) {
-  return req.session && req.session.user_profile;
-}
+// Helpers
 app.dynamicHelpers({
     session: function(req, res) {
         return req.session;
+    },
+    loggedIn: function(req, res) {
+        return req.session && req.session.user_profile;
     }
 });
 
@@ -55,12 +55,8 @@ app.dynamicHelpers({
 // Routes
 
 app.get('/', function(req, res){
-  if(!isLoggedIn(req)){
-    return res.redirect("/signin/twitter");
-  }
   res.render('index', {
-    title: conf.title,
-    screen_name: req.session.user_profile.screen_name
+    title: conf.title
   });
 });
 
@@ -97,8 +93,8 @@ app.get('/signin/twitter/callback', function(req, res) {
 });
 
 app.get('/signout', function(req, res) {
-    if(req.session && req.session.oauth) delete req.session.oauth;
-    if(req.session && req.session.user)  delete req.session.user_profile;
+    delete req.session.oauth;
+    delete req.session.user_profile;
     res.redirect('/');
 });
 
