@@ -1,47 +1,63 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-  <head>
-    <title><%= title %></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="" />
-    <meta name="description" content="" />
-    <link rel='stylesheet' href='/stylesheets/default.css' />
-  </head>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title><%= title %></title>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <link rel='stylesheet' href='/stylesheets/default.css' type=
+  "text/css" />
+</head>
 
-  <body>
-    <div id="wrapper">
-       <div id="main_container">
-        <div id="left_container">
-          <div id="site_logo"><span class="red">Un</span>titled</div>
-          <div id="left_menu">
-            <ul>
-              <li><a href="#">- Sub page one</a></li>
-              <li><a href="#">- Sub page three</a></li>
-              <li><a href="#">- Sub page four</a></li>
-            </ul>
-          </div>
+<body>
+  <div id="wrapper">
+    <div id="main_container">
+      <div id="left_container">
+        <div id="me" class="clearfix">
+          <a href=
+          "#!/<%= session.user_profile.screen_name %>"><img src="http://api.twitter.com/1/users/profile_image/<%= session.user_profile.screen_name %>?size=bigger" /></a>
+
+          <ul>
+            <li>@<%= session.user_profile.screen_name %></li>
+          </ul>
         </div>
-        <div id="right_container">
-          <div id="header_bar">
-           <ul>
+
+        <div id="left_menu">
+          <ul id="members"></ul>
+        </div>
+      </div>
+
+      <div id="right_container">
+        <div id="header_bar">
+          <ul>
             <li><span class="active">Home</span></li>
+
             <li><a href="#">Products</a></li>
+
             <li><a href="#">Services</a></li>
+
             <li><a href="#">Support</a></li>
+
             <li><a href="#">About Us</a></li>
           </ul>
-          </div>
-          <%- body %>
-        <div id="footer_bar">
-          &copy; 20006 Your Company Inc. All rights reserved. Design by <a href="http://www.maravan.in">Ganesh Gunasegaran</a>.
-          <br />
+        </div>
+        <%- body %>
 
-<!--This theme is free for distriubtion,  so long as  link to openwebdesing.org and www.best10webhosting.net  stay on the theme-->
-Courtesy of <a href="http://www.openwebdesign.org" target="_blank">Open Web Design</a> &amp; <a href="http://www.dubaiapartments.biz/hotels/" target="_blank">Hotels - Dubai</a></div>
+        <div id="footer_bar">
+          &copy; 2011 <%= title %>. All rights reserved. Design by
+          <a href="http://www.maravan.in">Ganesh
+          Gunasegaran</a>.<br />
+          <!--This theme is free for distriubtion,  so long as  link to openwebdesing.org and www.best10webhosting.net  stay on the theme-->
+          Courtesy of <a href="http://www.openwebdesign.org"
+          target="_blank">Open Web Design</a> &amp; <a href=
+          "http://www.dubaiapartments.biz/hotels/" target=
+          "_blank">Hotels - Dubai</a>
+        </div>
       </div>
     </div>
-  </body>
-
-</html>
+  </div>
+</body>
 </html>

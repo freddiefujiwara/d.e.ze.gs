@@ -183,15 +183,34 @@ th {
   background: inherit;
 }
 /* Custom Styles */
-#site_logo {
+#me {
   font-family: georgia, serif;
-  font-size: 180%;
   font-weight: bold;
   padding-top: 15px;
   padding-left: 20px;
   padding-bottom: 15px;
   font-style: italic;
   letter-spacing: 1px;
+  overflow: hidden;
+}
+#me img {
+}
+#me ul {
+  list-style-type: none; 
+  padding: 0px;
+}
+#me a, #me a:link {
+  display: block;
+  text-decoration: none;
+  color: #000066;
+  background-color: inherit;
+  border: 0px;
+  padding: 4px;
+}
+
+#me a:hover {
+  background-color: #fcfcfc;
+  color: #aa0000;
 }
 
 .red {
@@ -223,6 +242,18 @@ th {
 #header_bar li{
   display: inline;
 }
+li.other img {
+  float: left;
+  border: 0px;
+}
+li.other ul {
+  list-style-type: none; 
+  border: 0px;
+}
+li.other li {
+  border: 0px;
+  overflow: hidden;
+}
 
 #left_menu ul {
   list-style-type: none;
@@ -230,7 +261,7 @@ th {
   padding-right: 10px;
 }
 
-#left_menu li {
+#left_menu li.other {
   border-bottom: 1px solid #eee;
 }
 
@@ -253,13 +284,17 @@ th {
   color: inherit;
   background-color: #ffffcc;
   border: 1px solid #eeeebb;
+  height: 100px;
 }
 
 .block .inner {
-  position: relative;
-  left: 2px;
-  top: 2px;
-  padding: 10px;
+  background-color: #ffffcc;
+  margin: 10px;
+  width: 95%;
+  height: 80px;
+  border: none;
+  font-size: 150%;
+  color: "#ddd";
 }
 
 .text_box{
@@ -281,3 +316,16 @@ th {
   color: inherit;
   background-color: #f9f9f9;
 }
+
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */

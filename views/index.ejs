@@ -1,40 +1,105 @@
-          <div class="block">
-            <div class="inner">
-              This design is named "Untitled" because I really couldn't comeup with a title. Thanks Mejobloggs for bug fixing and cross browser testing. As usual the template is free for any use.
-            </div>
-          </div>
-          <h3>Site News</h3>
-          <p>
-            Long long ago so long ago, noone knew how long ago, there lived a king. The king was very proud of his country and did all good things to his country. Long long ago so long ago, noone knew how long ago, there lived a king. The king was very proud of his country and did all good things to his country.
-          </p>
-          <blockquote><p>"Simplicity is the ultimate sophistication..."</p></blockquote>
-          <p>
-            <a href="#">This is a test link</a>
-          </p>
-           Unordered List
-            <ul>
-              <li>List element</li>
-              <li>List element</li>
-              <li>List element</li>
-            </ul>
-           Ordered List
-            <ol>
-              <li>List element</li>
-              <li>List element</li>
-              <li>List element</li>
-            </ol>
-          <p>
-            <input type="text" class="text_box"></input> <br />
-            <input type="button" value="Test Button" class="button"></input>
-          </p>
-          <table>
-            <tr>
-              <th>header 1</th>
-              <th>header 2</th>
-            </tr>
-            <tr>
-              <td>content 1</td>
-              <td>content 2</td>
-            </tr>
-          </table>
-        </div>
+  <div class="block">
+    <textarea class="inner" id="typing"></textarea>
+  </div>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script src="/javascripts/ejs/ejs.min.js" type=
+  "text/javascript"></script>
+<script type="text/javascript" src="/javascripts/jquery.typing.min.js"></script>
+</script><script type="text/javascript" lang="javascript">
+//<![CDATA[
+  var ejs = require("ejs");
+  //]]>
+  </script><script src="/socket.io/socket.io.js" type=
+  "text/javascript">
+</script><script type="text/javascript">
+//<![CDATA[
+var stat = null;
+$(document).ready(function(){
+  var studyTime = 0 ,typeStart = 0;
+
+  stat = io.connect('http://<%= title %>/status', {transports: ["xhr-polling"],port: 80 });
+
+  stat.on('connect', function() {
+    stat.emit('signin',{
+      "screen_name": "<%= session.user_profile.screen_name %>",
+    });
+    var signin = function(msg){
+      var member = 
+      $('<li class="other clearfix"/>')
+      .attr("id",msg.id)
+      .append($("<a />")
+      .attr("href","#!/"+msg.screen_name)
+      .append($("<img />")
+      .attr("src","http://api.twitter.com/1/users/profile_image/"+msg.screen_name+"?size=normal"))
+      .append($("<ul />")
+      .append($("<li />")
+      .attr("id","screen_name"+msg.id)
+      .html("@"+msg.screen_name))
+      .append($("<li />")
+      .attr("id","status"+msg.id)
+      .html(msg.status))
+      ));
+      $("#members").append(member);
+      member
+      .animate({backgroundColor:"#fdf",color:"#fff"},500)
+      .animate({backgroundColor:"#fff",color:"#000"},500);
+    };
+    var updateStatus = function(msg,color){
+      var member = $("#"+msg.id);
+      var member_status = $("#status"+msg.id);
+      if(member.length > 0 && member_status.length > 0){
+        member_status.html(msg.status);
+        if(null != color){
+          member
+          .animate({backgroundColor:color,color:"#fff"},500)
+          .animate({backgroundColor:"#fff",color:"#000"},500);
+        }
+      } else {
+        signin(msg);
+      }
+    };
+    stat.on('signin', function (msg) {
+      signin(msg);
+    });
+    stat.on('signout', function (msg) {
+      var signout = $("#"+msg.id);
+      if(signout.length > 0){signout.remove();}
+    });
+    stat.on('miss', function (msg) {
+      updateStatus(msg,"#f00");
+    });
+    stat.on('clear', function (msg) {
+      updateStatus(msg,"#0f0");
+    });
+    stat.on('type start', function (msg) {
+      updateStatus(msg,null);
+    });
+    stat.on('type end', function (msg) {
+      updateStatus(msg,null);
+    });
+    stat.on('clear', function (msg) {
+      updateStatus(msg,"#0f0");
+    });
+    $('#typing').typing({
+      start: function (event, $elem) {
+          startTime = (new Date()).getTime();
+          stat.emit('type start',{
+            "screen_name": "<%= session.user_profile.screen_name %>",
+          });
+          $elem.css('background', '#ddd');
+      },
+      stop: function (event, $elem) {
+          studyTime += (new Date()).getTime() - startTime;
+          stat.emit('type end',{
+            "screen_name": "<%= session.user_profile.screen_name %>",
+            "studyTime"  : studyTime
+          });
+          $elem.css('background', '#ffffcc');
+      },
+      delay: 1000
+    });
+  });
+});
+  //]]>
+  </script>
