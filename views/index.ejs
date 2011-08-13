@@ -207,7 +207,7 @@
         return false;
       }
     })
-    .blur( function() {
+    .bind("blur", function() {
       var $textarea = $(this),
           text = $textarea.val(),
           new_text = text.replace(/[\r\n ]+/g, " ");
