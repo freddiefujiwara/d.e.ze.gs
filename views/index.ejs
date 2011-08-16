@@ -63,182 +63,243 @@
 </script><script type="text/javascript">
 //<![CDATA[
   $(document).ready(function(){
-  $('#typing')
-  .attr("disabled","disabled")
-  .val("Please input your answer and key press ENTER");
-  var studyTime = 0 ,typeStart = 0, miss = 0, screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
-  if("" == screenName){
-    $("<a href='/static/go_twitter.html' rel='prettyPopin'><\/a>")
-    .prettyPopin({height:300,width: 550,followScroll:false})
-    .click();
-    return;
-  }
+    var studyTime = 0 ,typeStart = 0, screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
+    $('#typing')
+    .attr("disabled","disabled")
+    .val("Please input your answer and key press ENTER");
+    if("" == screenName){
+      $("<a href='/static/go_twitter.html' rel='prettyPopin'><\/a>")
+      .prettyPopin({height:300,width: 550,followScroll:false})
+      .click();
+      return;
+    }
 
-  var stat = io.connect('http://<%= title %>/status', {transports: ["xhr-polling"],port: 80 });
+    var doContents = function(status){
+      $("#contents").html(""+(status.contents+1)+"/40");
+      $("#audio_player").jPlayer("destroy");
 
-  stat.on('connect', function() {
-    stat.emit('signin',{
-      "screen_name": screenName
-    });
-    var signin = function(msg){
-      var member = 
-      $('<li class="other clearfix"/>')
-      .attr("id",msg.id)
-      .append($("<a />")
-      .attr("href","#!/"+msg.screen_name)
-      .append($("<img />")
-      .attr("src","http://api.twitter.com/1/users/profile_image/"+msg.screen_name+"?size=normal"))
-      .append($("<ul />")
-      .append($("<li />")
-      .attr("id","screen_name"+msg.id)
-      .html("@"+msg.screen_name))
-      .append($("<li />")
-      .attr("id","status"+msg.id)
-      .html(msg.status))
-      ));
-      $("#members").append(member);
-      member
-      .animate({backgroundColor:"#fdf",color:"#fff"},500)
-      .animate({backgroundColor:"#fff",color:"#000"},500);
-    };
-    var updateStatus = function(msg,color){
-      var member = $("#"+msg.id);
-      var member_status = $("#status"+msg.id);
-      if(member.length > 0 && member_status.length > 0){
-        member_status.html(msg.status);
-        if(null != color){
-          member
-          .animate({backgroundColor:color,color:"#fff"},500)
-          .animate({backgroundColor:"#fff",color:"#000"},500);
+      $('#typing').unbind().typing({
+        start: function (event, $elem) {
+            $("#result ins").css("color","#ddd").css("text-decoratoin","non").css("background-color","#ddd");
+            $("#result del").remove();
+            startTime = (new Date()).getTime();
+            stat.emit('type start',{
+              "screen_name": screenName,
+              "contents"  : status.contents
+            });
+            $elem.css('background', '#009be3')
+            .css('color', '#fff');
+        },
+        stop: function (event, $elem) {
+            $("#result ins").css("color","#ddd").css("text-decoratoin","non").css("background-color","#ddd");
+            $("#result del").remove();
+            studyTime += (new Date()).getTime() - startTime;
+            stat.emit('type end',{
+              "screen_name": screenName,
+              "studyTime"  : studyTime,
+              "contents"  : status.contents
+            });
+            var sec = parseInt(parseInt(studyTime)/1000);
+            
+            var hour= parseInt(sec/(60 * 60));
+            if(hour > 0 ){sec    %= (hour * 60 * 60);}
+            
+            var min = parseInt(sec/60);
+            if(min > 0 ){sec    %= (min * 60);}
+            
+            if(hour< 10){hour = "0"+hour};
+            if(min < 10){min  = "0"+min};
+            if(sec < 10){sec  = "0"+sec};
+            $("#study_time").html('STUDY: '+hour+":"+min+":"+sec);
+            $elem.css('background', '#ddd')
+            .css('color', '#666')
+        },
+        delay: 1000
+      })
+      .removeAttr("disabled")
+      .val("")
+      .focus()
+      .keypress(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+          var $textarea = $(this);
+          var dmp = new diff_match_patch();
+          var d = dmp.diff_main($textarea.val(),contents[status.contents]);
+          if("" != $textarea.val() && 1 == d.length){
+            $("#result").html($("<span />"));
+            stat.emit('clear',{
+              "screen_name": screenName,
+              "contents": status.contents
+            });
+            $("#study_time").html('CLEAR!!');
+            $("#me")
+            .animate({backgroundColor:"#0f0",color:"#fff"},500)
+            .animate({backgroundColor:"#fff",color:"#000"},500);
+            $("#result").empty();
+            status.contents++;
+            $("#audio_player").jPlayer("stop");
+            doContents(status);
+          }else{
+            dmp.diff_cleanupEfficiency(d);
+            $("#result").html(dmp.diff_prettyHtml(d));
+            status.miss++;
+            stat.emit('miss',{
+              "screen_name": screenName,
+              "miss" : status.miss,
+              "contents"  : status.contents
+            });
+            $("#study_time").html('MISS!!: '+status.miss);
+            $("#me")
+            .animate({backgroundColor:"#f00",color:"#fff"},500)
+            .animate({backgroundColor:"#fff",color:"#000"},500);
+          }
+          return false;
         }
-      } else {
-        signin(msg);
-      }
-    };
-    stat.on('signin', function (msg) {
-      signin(msg);
-    });
-    stat.on('signout', function (msg) {
-      var signout = $("#"+msg.id);
-      if(signout){signout.remove();}
-    });
-    stat.on('miss', function (msg) {
-      updateStatus(msg,"#f00");
-    });
-    stat.on('clear', function (msg) {
-      updateStatus(msg,"#0f0");
-    });
-    stat.on('type start', function (msg) {
-      updateStatus(msg,null);
-    });
-    stat.on('type end', function (msg) {
-      updateStatus(msg,null);
-    });
-    stat.on('clear', function (msg) {
-      updateStatus(msg,"#0f0");
-    });
-    $('#typing').typing({
-      start: function (event, $elem) {
-          $("#result ins").css("color","#ddd").css("text-decoratoin","non").css("background-color","#ddd");
-          $("#result del").remove();
-          startTime = (new Date()).getTime();
-          stat.emit('type start',{
-            "screen_name": screenName
-          });
-          $elem.css('background', '#009be3')
-          .css('color', '#fff');
-      },
-      stop: function (event, $elem) {
-          $("#result ins").css("color","#ddd").css("text-decoratoin","non").css("background-color","#ddd");
-          $("#result del").remove();
-          studyTime += (new Date()).getTime() - startTime;
-          stat.emit('type end',{
-            "screen_name": screenName,
-            "studyTime"  : studyTime
-          });
-          var sec = parseInt(parseInt(studyTime)/1000);
-          
-          var hour= parseInt(sec/(60 * 60));
-          if(hour > 0 ){sec    %= (hour * 60 * 60);}
-          
-          var min = parseInt(sec/60);
-          if(min > 0 ){sec    %= (min * 60);}
-          
-          if(hour< 10){hour = "0"+hour};
-          if(min < 10){min  = "0"+min};
-          if(sec < 10){sec  = "0"+sec};
-          $("#study_time").html('STUDY: '+hour+":"+min+":"+sec);
-          $elem.css('background', '#ddd')
-          .css('color', '#666')
-      },
-      delay: 1000
-    })
-    .removeAttr("disabled")
-    .val("")
-    .focus()
-    .keypress(function (e) {
-      if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-        var $textarea = $(this);
-        var dmp = new diff_match_patch();
-        var d = dmp.diff_main($textarea.val(),"We must respect the will of the individual");
-        if(1 == d.length){
-          $("#result").html($("<span />"));
-          stat.emit('clear',{
-            "screen_name": screenName
-          });
-          $("#study_time").html('CLEAR!!');
-          $("#me")
-          .animate({backgroundColor:"#0f0",color:"#fff"},500)
-          .animate({backgroundColor:"#fff",color:"#000"},500);
-          $("#result").empty();
-        }else{
-          dmp.diff_cleanupEfficiency(d);
-          $("#result").html(dmp.diff_prettyHtml(d));
-          miss++;
-          stat.emit('miss',{
-            "screen_name": screenName,
-            "miss" : miss
-          });
-          $("#study_time").html('MISS!!: '+miss);
-          $("#me")
-          .animate({backgroundColor:"#f00",color:"#fff"},500)
-          .animate({backgroundColor:"#fff",color:"#000"},500);
+      })
+      .bind("blur", function() {
+        var $textarea = $(this),
+            text = $textarea.val(),
+            new_text = text.replace(/[\r\n ]+/g, " ");
+        if (new_text != text) {
+            $textarea.val(new_text);
         }
-        return false;
-      }
-    })
-    .bind("blur", function() {
-      var $textarea = $(this),
-          text = $textarea.val(),
-          new_text = text.replace(/[\r\n ]+/g, " ");
-      if (new_text != text) {
-          $textarea.val(new_text);
-      }
-    });
-    $("#audio_player").jPlayer({
-       ready: function(){
-          $(this).jPlayer("setMedia", {
-             mp3: "http://englishplactice.appspot.com/apis/tts.mp3?q=We+must+respect+the+will+of+the+individual."
-             //mp3: "http://www.sousound.com/music/mondo_lounge/mondo_01.mp3"
+      });
+      $("#audio_player").unbind().jPlayer({
+         ready : function(){
+          $(this).jPlayer("setMedia",{ 
+             mp3: "http://d.d.e.ze.gs/sounds/"+(status.contents+1)+".mp3"
           }).jPlayer("play");
-       },
-       preload: "auto",
-       volume: 1.0,
-       muted: false,
-       backgroundColor: "#eee",
-       errorAlerts:false,
-       warningAlerts:false,
-       ended: function (event) {
-          $(this).jPlayer("play");
-       },
-       swfPath: "/swfs/",
-       solution: 'flash,html',
-       supplied: "mp3, m4a, oga"
-    })
-    .bind($.jPlayer.event.play, function() {
-       $(this).jPlayer("pauseOthers");
+         },
+         preload: "auto",
+         volume: 1.0,
+         muted: false,
+         backgroundColor: "#eee",
+         errorAlerts:false,
+         warningAlerts:false,
+         ended: function (event) {
+            $(this).jPlayer("play");
+         },
+         swfPath: "/swfs/",
+         solution: 'flash,html',
+         supplied: "mp3, m4a, oga"
+      })
+      .bind($.jPlayer.event.play, function() {
+         $(this).jPlayer("pauseOthers");
+      });
+    };
+      
+    var stat = io.connect('http://<%= title %>/status', {transports: ["xhr-polling"],port: 80 });
+    stat.on('connect', function() {
+      stat.emit('signin',{
+        "screen_name": screenName,
+        "contents"  : 0
+      });
+      var signin = function(msg){
+        var member = 
+        $('<li class="other clearfix"/>')
+        .attr("id",msg.id)
+        .append($("<a />")
+        .attr("href","#!/"+msg.screen_name)
+        .append($("<img />")
+        .attr("src","http://api.twitter.com/1/users/profile_image/"+msg.screen_name+"?size=normal"))
+        .append($("<ul />")
+          .append($("<li />")
+          .attr("id","screen_name"+msg.id)
+          .html("@"+msg.screen_name))
+          .append($("<li />")
+          .attr("id","status"+msg.id))
+          .append($("<li />")
+          .attr("id","contents"+msg.id))
+        ));
+        $("#members").append(member);
+        member
+        .animate({backgroundColor:"#fdf",color:"#fff"},500)
+        .animate({backgroundColor:"#fff",color:"#000"},500);
+      };
+      var updateStatus = function(msg,color){
+        var member = $("#"+msg.id);
+        var member_status   = $("#status"+msg.id);
+        var member_contents = $("#contents"+msg.id);
+        if(member.length > 0 && member_status.length > 0){
+          member_status.html(msg.status);
+          member_contents.html(""+(1+msg.contents)+"/40");
+          if(null != color){
+            member
+            .animate({backgroundColor:color,color:"#fff"},500)
+            .animate({backgroundColor:"#fff",color:"#000"},500);
+          }
+        } else {
+          signin(msg);
+        }
+      };
+      stat.on('signin', function (msg) {
+        signin(msg);
+      });
+      stat.on('signout', function (msg) {
+        var signout = $("#"+msg.id);
+        if(signout){signout.remove();}
+      });
+      stat.on('miss', function (msg) {
+        updateStatus(msg,"#f00");
+      });
+      stat.on('clear', function (msg) {
+        updateStatus(msg,"#0f0");
+      });
+      stat.on('type start', function (msg) {
+        updateStatus(msg,null);
+      });
+      stat.on('type end', function (msg) {
+        updateStatus(msg,null);
+      });
+      stat.on('clear', function (msg) {
+        updateStatus(msg,"#0f0");
+      });
+      doContents({
+        "miss":0,
+        "contents":0
+      });
     });
-  });
+    var contents = [
+      "Who cooked this? I did.",
+      "I went to the library yesterday.",
+      "Does he know where to go? Yes, he does.",
+      "How long have you lived in this country?",
+      "Ellen may be angry.",
+      "Will you please pass me the salt? Sure.",
+      "They began to sing then.",
+      "They all know the truth.",
+      "My wife wants to go on a trip to Kyoto.",
+      "Do I have to read this book? Yes, you do.",
+      "Is your son tall? Yes, he is. ",
+      "Does your sister often go there? Yes, she does.",
+      "Please show us the picture.",
+      "Does he work here? No, he doesn't.",
+      "Is she your sister? No, she isn't.",
+      "Jump as high as you can.",
+      "Didn't you study last week? Yes, I did.",
+      "I don't know why he studies German.",
+      "Didn't you come here yesterday? No, I didn't.",
+      "Are most junior high school students taught English in Japan? Yes, they are.",
+      "The teacher likes students who study hard.",
+      "Wansn't he in his room? No, he wasn't.",
+      "I made him with the book.",
+      "How tall those boys are!",
+      "He went to the park to see her.",
+      "They heard her cry.",
+      "My mother likes singing.",
+      "He hasn't eaten lunch yet.",
+      "Is your father a doctor? Yes, he is.",
+      "At last he got angry.",
+      "Studying foreign languages is interesting.",
+      "Study harder, or you will fall the examination.",
+      "How many cups of coffee do you drink a day?",
+      "Does your dog eat fish?",
+      "It must be snowing in New York.",
+      "Doesn't he speak Japanese? No, he doesn't.",
+      "How bright that star is!",
+      "Tom is the smartest in the class.",
+      "She believed that he was rich.",
+      "Bob may still be sleeping. "
+    ];
   });
   //]]>
   </script>
