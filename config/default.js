@@ -9,5 +9,17 @@ module.exports = {
       "consumerKey"    : "Ulo9GnRzZdJxNdROUezig",
       "consumerSecret" : "epYDCAA9eip50C31mxhIqaZUbzPqO9jnVarALP2EsKk"
     }
+  },
+  "accessLog": {
+     "filePath": __dirname + "/../log/access.log",
+     "flags"   : "w",
+     "encoding": "utf8",
+     "mode"    : "0664"
+  },
+  "systemLog":  {
+     "filePath": __dirname + "/../log/system.log",
+     "flags"   : "w",
+     "encoding": "utf8",
+     "mode"    : "0664"
   }
 };

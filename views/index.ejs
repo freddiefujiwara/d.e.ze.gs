@@ -8,6 +8,11 @@
     </ul>
   </div>
 
+  <ul id="controller">
+    <li><a href="javascript:void(0);" id="back">&lt;&lt;BACK</a></li>
+    <li><a href="javascript:void(0);" id="skip">SKIP &gt;&gt;</a></li>
+  </ul>
+
   <div id="audio_player" class="jp-jplayer"></div>
   <div class="jp-audio">
     <div class="jp-type-single">
@@ -75,29 +80,62 @@
     }
 
     var doContents = function(status){
-      $("#contents").html(""+(status.contents+1)+"/40");
+      document.location.hash = "!/contents/1/1/40/"+(status.contents+1);
+      $("#result").html($("<span />"));
+      $("#result").empty();
+      $("#audio_player").jPlayer("stop");
+      $("#contents").html("CLEAR:"+status.clear+"("+(status.contents+1)+"/40)");
       $("#audio_player").jPlayer("destroy");
+
+      var move = function(status){
+         stat.emit('skip',{
+           "screen_name": screenName,
+           "clear"      : status.clear,
+           "miss"       : status.miss,
+           "studyTime"  : studyTime,
+           "contents"   : status.contents
+         });
+         $("#study_time").html('SKIP');
+         $("#me")
+         .clearQueue()
+         .animate({backgroundColor:"#f0f",color:"#fff"},500)
+         .animate({backgroundColor:"#fff",color:"#000"},500);
+         doContents(status);
+      };
+      $('#skip').unbind().click(function(){
+         status.contents = (++status.contents)%40;
+         move(status);
+      });
+      $('#back').unbind().click(function(){
+         status.contents = 0 == status.contents ? 39 : --status.contents;
+         move(status);
+      });
 
       $('#typing').unbind().typing({
         start: function (event, $elem) {
-            $("#result ins").css("color","#ddd").css("text-decoratoin","non").css("background-color","#ddd");
+            $("#result ins").css("color","#ddd").css("text-decoration","non").css("background-color","#ddd");
             $("#result del").remove();
             startTime = (new Date()).getTime();
             stat.emit('type start',{
               "screen_name": screenName,
-              "contents"  : status.contents
+              "clear"      : status.clear,
+              "miss"       : status.miss,
+              "studyTime"  : studyTime,
+              "contents"   : status.contents
             });
             $elem.css('background', '#009be3')
             .css('color', '#fff');
         },
         stop: function (event, $elem) {
-            $("#result ins").css("color","#ddd").css("text-decoratoin","non").css("background-color","#ddd");
+            $("#result ins").css("color","#ddd").css("text-decoration","non").css("background-color","#ddd");
             $("#result del").remove();
             studyTime += (new Date()).getTime() - startTime;
             stat.emit('type end',{
               "screen_name": screenName,
               "studyTime"  : studyTime,
-              "contents"  : status.contents
+              "clear"      : status.clear,
+              "miss"       : status.miss,
+              "contents"   : status.contents
             });
             var sec = parseInt(parseInt(studyTime)/1000);
             
@@ -110,7 +148,7 @@
             if(hour< 10){hour = "0"+hour};
             if(min < 10){min  = "0"+min};
             if(sec < 10){sec  = "0"+sec};
-            $("#study_time").html('STUDY: '+hour+":"+min+":"+sec);
+            $("#study_time").html('TIME: '+hour+":"+min+":"+sec);
             $elem.css('background', '#ddd')
             .css('color', '#666')
         },
@@ -125,18 +163,20 @@
           var dmp = new diff_match_patch();
           var d = dmp.diff_main($textarea.val(),contents[status.contents]);
           if("" != $textarea.val() && 1 == d.length){
-            $("#result").html($("<span />"));
+            status.clear++;
+            status.contents = (++status.contents)%40;
             stat.emit('clear',{
               "screen_name": screenName,
-              "contents": status.contents
+              "clear"      : status.clear,
+              "miss"       : status.miss,
+              "studyTime"  : studyTime,
+              "contents"   : status.contents
             });
-            $("#study_time").html('CLEAR!!');
+            $("#study_time").html('CLEAR!!:'+status.clear);
             $("#me")
+            .clearQueue()
             .animate({backgroundColor:"#0f0",color:"#fff"},500)
             .animate({backgroundColor:"#fff",color:"#000"},500);
-            $("#result").empty();
-            status.contents++;
-            $("#audio_player").jPlayer("stop");
             doContents(status);
           }else{
             dmp.diff_cleanupEfficiency(d);
@@ -144,11 +184,14 @@
             status.miss++;
             stat.emit('miss',{
               "screen_name": screenName,
-              "miss" : status.miss,
-              "contents"  : status.contents
+              "miss"       : status.miss,
+              "clear"      : status.clear,
+              "studyTime"  : studyTime,
+              "contents"   : status.contents
             });
             $("#study_time").html('MISS!!: '+status.miss);
             $("#me")
+            .clearQueue()
             .animate({backgroundColor:"#f00",color:"#fff"},500)
             .animate({backgroundColor:"#fff",color:"#000"},500);
           }
@@ -166,7 +209,7 @@
       $("#audio_player").unbind().jPlayer({
          ready : function(){
           $(this).jPlayer("setMedia",{ 
-             mp3: "http://d.d.e.ze.gs/sounds/"+(status.contents+1)+".mp3"
+             mp3: "/sounds/"+(status.contents+1)+".mp3"
           }).jPlayer("play");
          },
          preload: "auto",
@@ -191,6 +234,9 @@
     stat.on('connect', function() {
       stat.emit('signin',{
         "screen_name": screenName,
+        "clear"  : 0,
+        "miss"   : 0,
+        "studyTime"  : 0,
         "contents"  : 0
       });
       var signin = function(msg){
@@ -212,6 +258,7 @@
         ));
         $("#members").append(member);
         member
+        .clearQueue()
         .animate({backgroundColor:"#fdf",color:"#fff"},500)
         .animate({backgroundColor:"#fff",color:"#000"},500);
       };
@@ -221,9 +268,10 @@
         var member_contents = $("#contents"+msg.id);
         if(member.length > 0 && member_status.length > 0){
           member_status.html(msg.status);
-          member_contents.html(""+(1+msg.contents)+"/40");
+          member_contents.html(""+msg.clear+"("+(msg.contents+1)+"/40)");
           if(null != color){
             member
+            .clearQueue()
             .animate({backgroundColor:color,color:"#fff"},500)
             .animate({backgroundColor:"#fff",color:"#000"},500);
           }
@@ -244,18 +292,25 @@
       stat.on('clear', function (msg) {
         updateStatus(msg,"#0f0");
       });
+      stat.on('skip', function (msg) {
+        updateStatus(msg,"#f0f");
+      });
       stat.on('type start', function (msg) {
         updateStatus(msg,null);
       });
       stat.on('type end', function (msg) {
         updateStatus(msg,null);
       });
-      stat.on('clear', function (msg) {
-        updateStatus(msg,"#0f0");
-      });
+      var contents=0;
+      if(match = document.location.hash.match(/^#!\/contents\/1\/1\/40\/([0-9]+)$/)){
+         if(2 == match.length && 1 <= match[1] && match[1] <= 40){ 
+           contents = parseInt(match[1])-1;
+         }
+      }
       doContents({
         "miss":0,
-        "contents":0
+        "clear":0,
+        "contents":contents
       });
     });
     var contents = [
@@ -269,7 +324,7 @@
       "They all know the truth.",
       "My wife wants to go on a trip to Kyoto.",
       "Do I have to read this book? Yes, you do.",
-      "Is your son tall? Yes, he is. ",
+      "Is your son tall? Yes, he is.",
       "Does your sister often go there? Yes, she does.",
       "Please show us the picture.",
       "Does he work here? No, he doesn't.",
@@ -279,26 +334,26 @@
       "I don't know why he studies German.",
       "Didn't you come here yesterday? No, I didn't.",
       "Are most junior high school students taught English in Japan? Yes, they are.",
+      "At last he got angry.",
       "The teacher likes students who study hard.",
-      "Wansn't he in his room? No, he wasn't.",
+      "Wasn't he in his room? No, he wasn't.",
       "I made him with the book.",
-      "How tall those boys are!",
+      "How tall those boys are.",
       "He went to the park to see her.",
       "They heard her cry.",
       "My mother likes singing.",
       "He hasn't eaten lunch yet.",
       "Is your father a doctor? Yes, he is.",
-      "At last he got angry.",
       "Studying foreign languages is interesting.",
       "Study harder, or you will fall the examination.",
       "How many cups of coffee do you drink a day?",
       "Does your dog eat fish?",
       "It must be snowing in New York.",
       "Doesn't he speak Japanese? No, he doesn't.",
-      "How bright that star is!",
+      "How bright that star is.",
       "Tom is the smartest in the class.",
       "She believed that he was rich.",
-      "Bob may still be sleeping. "
+      "Bob may still be sleeping."
     ];
   });
   //]]>

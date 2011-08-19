@@ -343,3 +343,36 @@ li.other li {
 * html .clearfix {height: 1%;}
 .clearfix {display: block;}
 /* End hide from IE-mac */
+ul#controller {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  display: block;
+  padding-bottom: 10px;
+  padding-left: 0px;
+  list-style-type: disc;  
+}
+#controller a:link, #controller a:visited {
+  text-decoration: none;
+  padding-top: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 3px;
+  color: #fff;
+  background-color: #444; 
+  text-transform: lowercase;
+  border-bottom: 0px;
+}
+
+#controller a:hover, #controller .active {
+  padding-top: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 3px;
+  color: #fff;
+  background-color: #009be3; 
+}
+
+#controller li{
+  display: inline;
+}
