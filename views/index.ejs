@@ -2,7 +2,7 @@
     <ul>
       <li><span class="active">Home</span></li>
 
-      <li><a href="/#!/ranking">Ranking</a></li>
+      <li><a href="/static/time_ranking.html" target="_blank">Ranking</a></li>
 
       <li><a href="/signout">Sign out</a></li>
     </ul>
@@ -68,7 +68,7 @@
 </script><script type="text/javascript">
 //<![CDATA[
   $(document).ready(function(){
-    var studyTime = 0 ,typeStart = 0, screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
+    var studyTime = 0 ,typeStart = 0, volume = 0.5, screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
     $('#typing')
     .attr("disabled","disabled")
     .val("Please input your answer and key press ENTER");
@@ -80,11 +80,11 @@
     }
 
     var doContents = function(status){
-      document.location.hash = "!/contents/1/1/40/"+(status.contents+1);
+      document.location.hash = "!/contents/1/1/80/"+(status.contents+1);
       $("#result").html($("<span />"));
       $("#result").empty();
       $("#audio_player").jPlayer("stop");
-      $("#contents").html("CLEAR:"+status.clear+"("+(status.contents+1)+"/40)");
+      $("#contents").html("CLEAR:"+status.clear+"("+(status.contents+1)+"/80)");
       $("#audio_player").jPlayer("destroy");
 
       var move = function(status){
@@ -103,11 +103,11 @@
          doContents(status);
       };
       $('#skip').unbind().click(function(){
-         status.contents = (++status.contents)%40;
+         status.contents = (++status.contents)%80;
          move(status);
       });
       $('#back').unbind().click(function(){
-         status.contents = 0 == status.contents ? 39 : --status.contents;
+         status.contents = 0 == status.contents ? 79 : --status.contents;
          move(status);
       });
 
@@ -164,7 +164,7 @@
           var d = dmp.diff_main($textarea.val(),contents[status.contents]);
           if("" != $textarea.val() && 1 == d.length){
             status.clear++;
-            status.contents = (++status.contents)%40;
+            status.contents = (++status.contents)%80;
             stat.emit('clear',{
               "screen_name": screenName,
               "clear"      : status.clear,
@@ -213,7 +213,7 @@
           }).jPlayer("play");
          },
          preload: "auto",
-         volume: 1.0,
+         volume: volume,
          muted: false,
          backgroundColor: "#eee",
          errorAlerts:false,
@@ -227,6 +227,9 @@
       })
       .bind($.jPlayer.event.play, function() {
          $(this).jPlayer("pauseOthers");
+      })
+      .bind($.jPlayer.event.volumechange, function(event) {
+         volume = event.jPlayer.status.volume;
       });
     };
       
@@ -268,7 +271,7 @@
         var member_contents = $("#contents"+msg.id);
         if(member.length > 0 && member_status.length > 0){
           member_status.html(msg.status);
-          member_contents.html(""+msg.clear+"("+(msg.contents+1)+"/40)");
+          member_contents.html(""+msg.clear+"("+(msg.contents+1)+"/80)");
           if(null != color){
             member
             .clearQueue()
@@ -302,8 +305,8 @@
         updateStatus(msg,null);
       });
       var contents=0;
-      if(match = document.location.hash.match(/^#!\/contents\/1\/1\/40\/([0-9]+)$/)){
-         if(2 == match.length && 1 <= match[1] && match[1] <= 40){ 
+      if(match = document.location.hash.match(/^#!\/contents\/1\/1\/80\/([0-9]+)$/)){
+         if(2 == match.length && 1 <= match[1] && match[1] <= 80){ 
            contents = parseInt(match[1])-1;
          }
       }
@@ -345,7 +348,7 @@
       "He hasn't eaten lunch yet.",
       "Is your father a doctor? Yes, he is.",
       "Studying foreign languages is interesting.",
-      "Study harder, or you will fall the examination.",
+      "Study harder, or you will fail the examination.",
       "How many cups of coffee do you drink a day?",
       "Does your dog eat fish?",
       "It must be snowing in New York.",
@@ -353,7 +356,47 @@
       "How bright that star is.",
       "Tom is the smartest in the class.",
       "She believed that he was rich.",
-      "Bob may still be sleeping."
+      "Bob may still be sleeping.",
+      "She likes cooking for her family.",
+      "How old is he? He is twenty years old.",
+      "I don't know how old she is.",
+      "Look at that broken window.",
+      "The girl playing the piano is Mary.",
+      "Can't he play the guitar? Yes, he can.",
+      "They have been married for ten years.",
+      "I found the book very interesting.",
+      "It was fine when they left.",
+      "Do you have anything to write with?",
+      "What time was it when he came back?",
+      "The boy whose uncle is American is good at English.",
+      "He is rich enough to travel abroad every year.",
+      "She may be sad.",
+      "Isn't your wife Japanese? No, she isn't.",
+      "How did you learn Chinese?",
+      "My brother has been studying mathematics since he got up.",
+      "Do you see the room the window of which is open?",
+      "The woman watched TV while her husband was washing the dishes.",
+      "She is too young to live alone.",
+      "Your grandmother will be glad to see you.",
+      "Do you think that it will rain in the afternoon?",
+      "What is cheese made from?",
+      "Are those girls his daughters? Yes, they are.",
+      "Call him, or he will get angry.",
+      "Aren't they angry? No, they aren't.",
+      "Do you keep your room clean? Yes, I do.",
+      "Do you have to buy all these books?",
+      "He is as smart as you.",
+      "You are tired, aren't you?",
+      "The garden is covered with flowers.",
+      "Why did you drink so much coffee?",
+      "I have just cleaned my room.",
+      "Have you ever been spoken to by a foreigner?",
+      "The old man likes taking a walk along the river after breakfast.",
+      "She thinks that she is right.",
+      "By whom is this cat taken care of?",
+      "Haven't you done your homework yet? No, I haven't.",
+      "He had his daughter make some coffee.",
+      "My mother always tells me to be more careful."
     ];
   });
   //]]>
