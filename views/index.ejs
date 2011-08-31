@@ -68,7 +68,7 @@
 </script><script type="text/javascript">
 //<![CDATA[
   $(document).ready(function(){
-    var studyTime = 0 ,typeStart = 0, volume = 0.5, screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
+    var studyTime = 0 ,typeStart = 0, volume = 0.5, play = 1 ,screenName = "<%= loggedIn ? session.user_profile.screen_name : '' %>";
     $('#typing')
     .attr("disabled","disabled")
     .val("Please input your answer and key press ENTER");
@@ -101,6 +101,8 @@
          .animate({backgroundColor:"#f0f",color:"#fff"},500)
          .animate({backgroundColor:"#fff",color:"#000"},500);
          doContents(status);
+         play = 1;
+         $("#play").html("PLAY:"+play);
       };
       $('#skip').unbind().click(function(){
          status.contents = (++status.contents)%80;
@@ -220,6 +222,8 @@
          warningAlerts:false,
          ended: function (event) {
             $(this).jPlayer("play");
+            play++;
+            $("#play").html("PLAY:"+play);
          },
          swfPath: "/swfs/",
          solution: 'flash,html',
